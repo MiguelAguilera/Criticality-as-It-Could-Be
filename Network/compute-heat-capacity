@@ -40,7 +40,7 @@ for rep in range(R):
 		plt.semilogx(betas,C[:,s,rep])
 				
 		print(mode,rep,size,np.max(C[:,s,rep]))
-filename='heat-capacities-homeostatic.npz'
+filename='heat-capacities.npz'
 np.savez(filename, betas=betas,sizes=sizes,R=R,C=C)
 
 

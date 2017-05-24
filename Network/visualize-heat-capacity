@@ -30,7 +30,7 @@ h=data['h']
 J=data['J']
 
 
-filename='heat-capacities-homeostatic.npz'
+filename='heat-capacities.npz'
 data=np.load(filename)
 betas=data['betas']
 sizes=data['sizes']
