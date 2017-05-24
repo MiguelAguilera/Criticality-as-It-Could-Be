@@ -1,0 +1,56 @@
+#!/usr/bin/env python
+
+from ising import ising
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+plt.rc('text', usetex=True)
+font = {'family':'serif','size':15, 'serif': ['computer modern roman']}
+plt.rc('font',**font)
+plt.rc('legend',**{'fontsize':16})
+
+
+filename='correlations-ising2D-size400.npy'
+Cdist=np.load(filename)
+
+fig, ax = plt.subplots(1,1,figsize=(5,3))
+plt.hist(Cdist,20,color='gray',normed=True)
+plt.ylabel(r'$P(c_{ij})$',fontsize=18, rotation=0, labelpad=25)
+plt.xlabel(r'$c_{ij}$',fontsize=18)
+plt.savefig('img/fig1a.pdf',bbox_inches='tight')
+
+
+mode='MonteCarlo'
+size=64
+rep=1
+filename='files/mode_'+mode+'-size_'+str(size)+'-ind_'+str(rep)+'.npz'
+data=np.load(filename)
+h=data['h']
+J=data['J']
+
+
+filename='heat-capacities-homeostatic.npz'
+data=np.load(filename)
+betas=data['betas']
+sizes=data['sizes']
+R=data['R']
+C=data['C']
+
+
+dashes=[(1,2),(2,2),(4,2),(4,2,2,2),(None,None)]
+labels=[r'N=4',r'N=8',r'N=16',r'N=32',r'N=64']
+b=0.8
+
+fig, ax = plt.subplots(1,1,figsize=(5,3))
+for i in range(1,6):
+	plt.plot(betas,np.mean(C[:,-i,:],axis=1),color='k',dashes=dashes[-i],label=labels[-i])
+	plt.fill_between(betas,np.min(C[:,-i,:],axis=1), np.max(C[:,-i,:],axis=1),color=[b,b,b])
+ax.set_xscale("log", nonposx='clip')
+plt.axis([0.5,3.5,0,1.5])
+plt.ylabel(r'$C(\beta)$',fontsize=20, rotation=0, labelpad=25)
+plt.xlabel(r'$\beta$',fontsize=18)
+plt.legend(loc='upper right', bbox_to_anchor=(1.05, 1.15), fancybox=True, shadow=True)
+plt.savefig('img/fig1b.pdf',bbox_inches='tight')
+
+plt.show()

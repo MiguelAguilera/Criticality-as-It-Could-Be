@@ -1,0 +1,58 @@
+#!/usr/bin/env python
+
+from ising import ising
+import numpy as np
+import matplotlib.pyplot as plt
+import os
+
+filename='correlations-ising2D-size400.npy'
+Cdist=np.load(filename)
+mode='MonteCarlo'
+
+sizes=2**np.arange(2,7)
+print(sizes)
+
+for rep in range(7,10):
+	for size in sizes:
+	
+	
+		m1=np.zeros(size)
+		
+		C1=np.zeros((size,size))
+		for i in range(size):
+			for j in range(i+1,size):
+				ind=np.random.randint(len(Cdist))
+				C1[i,j]=Cdist[ind]
+		
+		if mode=='exact':
+			I=ising(size)
+			I.inverse_exact(m1,C1,1E-5)
+			h=I.h.copy()
+			J=I.J.copy()
+			
+		if mode=='MonteCarlo':
+			I=ising(size)
+			I.independent_model(m1)
+		
+			u=0.01
+			T=1000*size
+			Iterations=1000
+			
+			if size>2**6:
+				u=0.0001
+				T=1000*size
+
+			for step in range(Iterations):
+				I.observablesMC(T)
+				I.h+=u*(m1-I.m)
+				I.J+=u*(C1-I.C)
+				fit = max(np.max(np.abs(I.m-m1)),np.max(np.abs(I.C-C1)))
+				fit1 = np.mean([np.mean(np.abs(I.m-m1)),np.mean(np.abs(I.C-C1))])
+				print(size,rep,step,fit,fit1,np.max(np.abs(I.J)))
+			h=I.h.copy()
+			J=I.J.copy()
+			
+		filename='files/mode_'+mode+'-size_'+str(size)+'-ind_'+str(rep)+'.npz'
+		np.savez(filename, J=J, h=h)
+		
+
