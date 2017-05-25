@@ -27,10 +27,8 @@ class ising:
 		self.Beta=1.0
 		self.defaultT=max(100,netsize*20)
 
-		self.Ssize1=int(np.floor(self.Ssize/2))	#size of first sensor
-		self.Ssize1=0
 		self.maxspeed=self.env.max_speed
-		self.sensorbins=np.linspace(-1.01,1.01,2**(self.Ssize-self.Ssize1)+1)
+		self.sensorbins=np.linspace(-1.01,1.01,2**(self.Ssize)+1)
 		self.Update(0)
 		
 
